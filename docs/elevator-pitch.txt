@@ -1,0 +1,1 @@
+Markdown Docs renders a product's shipped README.md and CHANGELOG.md, uploaded to a file field, as documentation and release-notes pages on your ExpressionEngine site — sections, anchors and a table of contents for the manual, a version, date and anchor per release for the changelog — so the files that ship with the product are the single source of its docs. Free, MIT.

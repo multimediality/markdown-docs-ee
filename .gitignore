@@ -1,0 +1,18 @@
+# ignore node dependency directories
+node_modules/
+
+# build artifacts
+dist/
+
+# ignore env specific files
+.htaccess
+.env
+.env.*
+
+# ignore log and other files
+*.log
+*.DS_Store
+Desktop.ini
+
+# screenshots for the store listing live outside the repo (same rule as the sibling add-ons)
+/docs/screenshots/

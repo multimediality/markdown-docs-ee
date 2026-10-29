@@ -1,0 +1,39 @@
+# Launch Punchlist — Markdown Docs
+
+**Status 2026-10-29 (1.0.0 built from the site plugin).** The multimediality.com site has rendered its add-on docs and changelogs with a site-specific plugin (`addon_docs`, 328 lines, two tags) since the site moved to ExpressionEngine. This release generalises it under the house structure: the two site-specific rules (links to multimediality.com rewritten to the rendering site; tables wrapped in `div.docs__table`) became the `rewrite_links` and `table_class` parameters with `config.php` defaults, the default field names went (a tag names its field, or a file id), rendering moved to a `Renderer` class covered by a harness, and `cache="no"` was added. The rendering rules themselves are unchanged, so the site's pages render byte-for-byte the same once its templates pass the field names. Verification baseline as built:
+
+- `php -l` clean on every file under PHP 8.1.0 (the declared floor) and 8.3.7 (the dev runtime).
+- `scripts/test_addon_cli.php` against the multimediality dev site (EE 7.5.28), with entry 15 (Yumpu Embed) and `addon_manual`: 52 checks, 52 passed, 0 skipped — classes, version sources, the renderer over both fixtures, the file lookup against the real entry.
+- `dist/markdown_docs_1.0.0.zip` carries exactly `markdown_docs/` (7 files, `icon.svg` included), `README.md` (the manual), `CHANGELOG.md`, `LICENSE`.
+- The dev site switched over on 2026-10-29 (item 9): installed with `eecli addons:install`, `addon_docs` uninstalled and deleted, templates and `config.php` updated. Fetched with curl afterwards: `/add-ons/` shows the three version lines, `/add-ons/yumpu-embed/` the Requirements section with its anchor, `/add-ons/yumpu-embed/docs/` the sections, two `docs__table` wrappers and every multimediality.com link rewritten to dev, `/add-ons/yumpu-embed/changelog/` one section per release; no unparsed tags anywhere. The browser check (table of contents, scrolling tables, Manual page) remains.
+- Versions agree (addon.setup.php, package.json, CHANGELOG, manual) at 1.0.0; requirements copy agrees everywhere (EE 7.2+, PHP 8.1+ with mbstring).
+
+**Not verified here, by construction:** the agent cannot log in to the dev site. The Manual page in the Add-on Manager, a fresh install of the zip, and the rendered site pages in a browser are section C.
+
+**Environment facts (checked 2026-10-29):** EE 7.5.28 autoloads `Michelf\MarkdownExtra` from `system/ee/legacy/libraries/typography/Markdown/Michelf/` at boot (`Boot/boot.php`), so the add-on bundles no parser. The store's search is fuzzy over descriptions; no listed add-on is named Markdown Docs, Docs, Readme, Manual or Changelog. Nearest neighbours: CommonMark by CartThrob (free; renders Markdown typed in a tag or field) and Content TOC ($12; heading anchors and a table of contents for a long field). Neither reads files or parses releases.
+
+---
+
+## A. What 1.0.0 is and what the harness covers
+
+1. **Parameters replace site assumptions.** `addon_docs` hard-coded `multimediality.com` as the rewrite origin, `docs__table` as the table wrapper and `addon_manual` / `addon_changelog` as the field names. Now `rewrite_links`, `table_class` (parameter or `$config['markdown_docs']`) and a required `field` (or `file_id`). The site's `config.php` carries the two defaults, so its templates only add `field=`.
+2. **Renderer split out.** `Renderer::manual()` / `changelog()` are pure functions of the source and three options, so the harness runs them over `scripts/fixtures/` without a template or an entry: title capture, `site:skip` and `<style>` removal, section split, TOC with nested h3s, GitHub-style ids with de-duplication (`upgrading-1`) and punctuation removal (`notes--caveats-php-84`), link rewriting with and without `www.`, table wrapping on and off, brace encoding, BOM and CRLF input, the empty document; release parsing with `Unreleased` and prose headings skipped, `v` prefixes, pre-release suffixes, missing dates, prefixed h3 ids inside a release.
+3. **Source split out.** `Source::fromEntryField()` / `fromFileId()`, with the local path first and the filesystem adapter as the fallback for remote uploads. The harness checks the null paths always and the real lookup when given an entry id and field.
+4. **Cache key** now includes `Renderer::signature()` (version, site URL, rewrite pattern, table class), so a parameter change renders fresh; `cache="no"` bypasses the cache.
+
+## B. Decisions and facts to confirm — needs a human
+
+5. ~~**Name.**~~ Markdown Docs (`markdown_docs`, `Multimediality\MarkdownDocs`), chosen 2026-10-29 after a store search.
+6. ~~**Price and license.**~~ Free, MIT, decided 2026-10-29. The site's license page for this add-on must show the MIT text rather than the shared commercial template.
+7. ~~**Icon.**~~ Drawn 2026-10-29 (`markdown_docs/icon.svg`): blue page outline with two text lines, filled aqua Markdown M↓, in the siblings' 128-unit style. Check it in the Add-on Manager and upload it to **Images** on both sites for `addon_icon`.
+8. **Store category.** Templating (it is a template plugin); Publishing as a second if the store allows two.
+
+## C. Browser and real-site checks — before calling 1.0.0 released
+
+9. **The multimediality dev site switched over.** `system/user/addons/markdown_docs/` installed, `addon_docs` uninstalled and removed, the four templates passing `field=`, `$config['markdown_docs']` set. Open `/add-ons/yumpu-embed/docs/`, `/add-ons/yumpu-embed/changelog/`, `/add-ons/yumpu-embed/` and `/add-ons/`: the table of contents, the section anchors, the wrapped tables (scroll a wide table on a narrow window), the version line on the cards, and links to multimediality.com pointing at the dev site.
+10. **The Manual page in the Add-on Manager** shows `markdown_docs/README.md` with its `site:skip` paragraph (the online-manual link) present there.
+11. **Fresh install** of `dist/markdown_docs_1.0.0.zip` on the EE skeleton tester: install from the Add-on Manager, create an upload directory that allows `md`, a File field, upload the fixture manual, and render it with the tag from the manual.
+12. **The site's own entry.** Create the `markdown-docs` entry on dev and production (CLAUDE.md, Publishing the docs), publish the manual and changelog, and check that the add-on renders its own manual at `/add-ons/markdown-docs/docs/`.
+13. **Tag the release** (`v1.0.0`) once 9–11 pass; the siblings tag at the release commit.
+
+## D. After 1.0.0 — tracked in `docs/TODO.md`, not gating

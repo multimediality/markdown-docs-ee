@@ -1,0 +1,12 @@
+{
+  "name": "markdown-docs-ee",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Utility scripts for packaging the Markdown Docs ExpressionEngine addon.",
+  "scripts": {
+    "build:release": "node scripts/build_release.js"
+  },
+  "dependencies": {
+    "archiver": "^8.0.0"
+  }
+}

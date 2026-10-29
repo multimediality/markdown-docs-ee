@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <g id="Page" fill="none" stroke="#2f80ed" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M26 8h56l24 24v84a4 4 0 0 1-4 4H26a4 4 0 0 1-4-4V12a4 4 0 0 1 4-4z"/>
+    <path d="M82 8v20a4 4 0 0 0 4 4h20"/>
+    <path d="M34 46h32M34 56h20"/>
+  </g>
+  <g id="Markdown" fill="#06b6d4">
+    <path d="M30 104V70h9l9 11 9-11h9v34h-9V83l-9 11-9-11v21z"/>
+    <path d="M85 104L72 88h8V70h10v18h8z"/>
+  </g>
+</svg>
