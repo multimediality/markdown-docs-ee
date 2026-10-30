@@ -15,6 +15,8 @@ npm install
 npm run build:release      # dist/markdown_docs_<version>.zip
 ```
 
+A pushed `v<version>` tag builds the same zip on GitHub Actions and attaches it to a GitHub release ([release.yml](.github/workflows/release.yml)).
+
 ## Develop
 
 Copy `markdown_docs/` to `system/user/addons/markdown_docs` on an EE 7 site and install it from the Add-on Manager, or with the CLI:

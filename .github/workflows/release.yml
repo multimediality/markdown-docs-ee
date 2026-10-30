@@ -1,0 +1,61 @@
+# Builds the release zip and attaches it to a GitHub release when a version
+# tag is pushed. The store copy is still the local build in dist/ (CLAUDE.md,
+# Versioning); this gives the open-source repo a download per release.
+#
+#   git tag v1.0.0 && git push origin v1.0.0
+#
+# The tag must match the version in markdown_docs/addon.setup.php, which the
+# build script reads; a mismatch fails the run before anything is published.
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check that the tag matches addon.setup.php
+        run: |
+          version=$(sed -n "s/.*'version'[[:space:]]*=>[[:space:]]*'\([^']*\)'.*/\1/p" markdown_docs/addon.setup.php)
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match addon.setup.php version '$version'"
+            exit 1
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - run: npm run build:release
+
+      - name: Release notes from CHANGELOG.md
+        run: |
+          # The "## <version> — <date>" section, up to the next "## " heading.
+          awk -v v="$VERSION" '
+            /^## / { printing = ($2 == v) }
+            printing { print }
+          ' CHANGELOG.md | tail -n +2 > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "Markdown Docs $VERSION. Changes: https://multimediality.com/add-ons/markdown-docs/changelog/" > release-notes.md
+          fi
+          cat release-notes.md
+
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" "dist/markdown_docs_${VERSION}.zip" \
+            --title "Markdown Docs $VERSION" \
+            --notes-file release-notes.md

@@ -15,7 +15,7 @@ npm install
 npm run build:release      # dist/markdown_docs_<version>.zip (+ CHANGELOG/LICENSE and the manual as README.md)
 ```
 
-The version is read from `markdown_docs/addon.setup.php` (the single source). A version bump = `addon.setup.php` + a dated `## <version> — <date>` section in `CHANGELOG.md` + one `- **<version>** …` bullet under `## Changelog` in `markdown_docs/README.md`; the harness checks the three agree. Bump `Renderer::VERSION` when the rendered output changes shape, so cached renders are invalidated.
+The version is read from `markdown_docs/addon.setup.php` (the single source). A version bump = `addon.setup.php` + a dated `## <version> — <date>` section in `CHANGELOG.md` + one `- **<version>** …` bullet under `## Changelog` in `markdown_docs/README.md`; the harness checks the three agree. Bump `Renderer::VERSION` when the rendered output changes shape, so cached renders are invalidated. Pushing a `v<version>` tag runs `.github/workflows/release.yml`, which builds the same zip on GitHub Actions and attaches it to a GitHub release with that version's CHANGELOG section as the notes; the tag must match `addon.setup.php` or the run fails before publishing. The store copy is still the local build in `dist/`.
 
 Lint with the MAMP PHP builds (neither is on PATH; the MAMP CLI loads no php.ini):
 
