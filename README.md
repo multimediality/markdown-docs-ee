@@ -1,3 +1,5 @@
+<img src="markdown_docs/icon.svg" alt="" width="96">
+
 # Markdown Docs for ExpressionEngine
 
 Render a product's shipped `README.md` and `CHANGELOG.md`, uploaded to file fields, as documentation and release-notes pages: sections, GitHub-style anchors, a table of contents, and a version, date and anchor per release. Free, MIT-licensed. It is the plugin behind the add-on docs on [multimediality.com](https://multimediality.com/add-ons/).
