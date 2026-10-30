@@ -2,8 +2,6 @@
 
 All notable changes to Markdown Docs are documented here, newest first. Each release groups its changes under Added, Changed, Removed, Fixed and Security, with Upgrading notes when a release needs a step.
 
-## Unreleased
-
 ## 1.0.0 — 2026-10-29
 
 First public release. Markdown Docs is the plugin that has rendered the documentation and changelog pages on multimediality.com since the site moved to ExpressionEngine, made general and packaged for the ExpressionEngine add-on store.
