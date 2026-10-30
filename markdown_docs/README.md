@@ -44,24 +44,22 @@ A tag names its file through the entry and the field (`entry_id` and `field`), o
 
 ### The manual tag
 
-```
-{exp:markdown_docs:manual entry_id="{entry_id}" field="addon_manual"}
-	{manual_intro}
+<pre class="markdown-docs-manual-code">{exp:markdown_docs:manual entry_id="{entry_id}" field="addon_manual"}
+    {manual_intro}
 
-	{if manual_section_count > 1}
-	<nav aria-label="Table of contents">{manual_toc}</nav>
-	{/if}
+    {if manual_section_count > 1}
+    &lt;nav aria-label="Table of contents"&gt;{manual_toc}&lt;/nav&gt;
+    {/if}
 
-	{manual_sections}
-	<section id="{section_anchor}">
-		<h2>{section_heading}</h2>
-		{section_body}
-	</section>
-	{/manual_sections}
+    {manual_sections}
+    &lt;section id="{section_anchor}"&gt;
+        &lt;h2&gt;{section_heading}&lt;/h2&gt;
+        {section_body}
+    &lt;/section&gt;
+    {/manual_sections}
 
-	{if no_results}<p>No documentation has been published yet.</p>{/if}
-{/exp:markdown_docs:manual}
-```
+    {if no_results}&lt;p&gt;No documentation has been published yet.&lt;/p&gt;{/if}
+{/exp:markdown_docs:manual}</pre>
 
 Parameters:
 
@@ -87,23 +85,19 @@ The tag shows its `{if no_results}` content when the field is empty, the file is
 
 ### The changelog tag
 
-```
-{exp:markdown_docs:changelog entry_id="{entry_id}" field="addon_changelog"}
-	<section id="{release_anchor}">
-		<h2>{release_version}{if release_date} &middot; {release_date}{/if}</h2>
-		{release_notes}
-	</section>
-	{if no_results}<p>No release notes have been published yet.</p>{/if}
-{/exp:markdown_docs:changelog}
-```
+<pre class="markdown-docs-manual-code">{exp:markdown_docs:changelog entry_id="{entry_id}" field="addon_changelog"}
+    &lt;section id="{release_anchor}"&gt;
+        &lt;h2&gt;{release_version}{if release_date} &amp;middot; {release_date}{/if}&lt;/h2&gt;
+        {release_notes}
+    &lt;/section&gt;
+    {if no_results}&lt;p&gt;No release notes have been published yet.&lt;/p&gt;{/if}
+{/exp:markdown_docs:changelog}</pre>
 
 The newest release alone, for a "Version 1.2.0, released October 28, 2026" line on an overview page or a listing card:
 
-```
-{exp:markdown_docs:changelog entry_id="{entry_id}" field="addon_changelog" limit="1"}
-	Version {release_version}{if release_date}, released {release_date}{/if}
-{/exp:markdown_docs:changelog}
-```
+<pre class="markdown-docs-manual-code">{exp:markdown_docs:changelog entry_id="{entry_id}" field="addon_changelog" limit="1"}
+    Version {release_version}{if release_date}, released {release_date}{/if}
+{/exp:markdown_docs:changelog}</pre>
 
 Parameters:
 
@@ -139,12 +133,10 @@ A release is a `## ` heading that starts with a version number, optionally prefi
 
 `rewrite_links` and `table_class` can be set once in `system/user/config/config.php`; a tag parameter still overrides them:
 
-```
-$config['markdown_docs'] = [
-    'rewrite_links' => 'https://example.com/',
-    'table_class' => 'docs__table',
-];
-```
+<pre class="markdown-docs-manual-code">$config['markdown_docs'] = [
+    'rewrite_links' =&gt; 'https://example.com/',
+    'table_class' =&gt; 'docs__table',
+];</pre>
 
 ### How the Markdown is rendered
 
@@ -153,6 +145,7 @@ $config['markdown_docs'] = [
 - Every `## ` heading starts a section. Every `## `, `### ` and `#### ` heading gets a GitHub-style id (lowercase, punctuation removed, spaces to hyphens, a repeated heading suffixed `-1`, `-2`…), so links like `[Installation](#installation)` inside the document work on the page.
 - Content between `<!-- site:skip -->` and `<!-- /site:skip -->`, each on its own line, is left out. Use it for text that only makes sense in the zip or the control panel's Manual page, such as "this manual is also available online at…".
 - `<style>` blocks are left out: they style the control panel's Manual page, and your site has its own CSS.
+- Inline HTML passes through, so a document can carry its own markup where Markdown falls short. One case worth knowing when a `README.md` is also an add-on's Manual page: the control panel renders a fenced code block as a two-line scrolling box. Write longer code samples as a `<pre>` HTML block instead, with `<` escaped as `&lt;`, and style the block for the control panel from a `<style>` block at the end of the file (this manual does both).
 - `{` and `}` are encoded, so template-tag examples in the documentation never run as tags, and conditionals in the template around the tag are unaffected.
 - The output is HTML with no classes of its own (apart from `table_class`). Style it from the template, for example by wrapping the tag in `<div class="doc-body">`.
 
@@ -182,3 +175,18 @@ The full changelog is at [multimediality.com/add-ons/markdown-docs/changelog](ht
 ## License
 
 Markdown Docs is free software under the MIT License. The full text is in the `LICENSE` file in the release and on the [license page](https://multimediality.com/add-ons/markdown-docs/license/).
+
+<style>
+.md-wrap .markdown-docs-manual-code {
+    margin: 0 0 20px;
+    padding: 1rem 1.25rem;
+    overflow: auto;
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: pre;
+    background: var(--ee-bg-15, #cbcbda);
+    color: var(--ee-text-primary, #0d0d19);
+    border: 1px solid var(--ee-bg-25, #adaec5);
+    border-radius: 5px;
+}
+</style>
